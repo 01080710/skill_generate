@@ -1,0 +1,11 @@
+#!/bin/sh
+# commit 訊息不含帳密
+# 由 .claude/skills/_daily/daily.py 檢查；被擋時照訊息修正，不要用 --no-verify 繞過。
+root=$(git rev-parse --show-toplevel) || exit 1
+for py in python3 python py; do
+  if command -v "$py" >/dev/null 2>&1 && "$py" -c "" >/dev/null 2>&1; then
+    exec "$py" "$root/.claude/skills/_daily/daily.py" preflight message "$1" --hook
+  fi
+done
+echo "[daily] ✗ 找不到 Python，無法執行 commit-msg 檢查（請安裝 Python 3.8+）" >&2
+exit 1
